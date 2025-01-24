@@ -1,8 +1,5 @@
-import pandas as pd
+
 import numpy as np
-from sklearn.metrics import precision_recall_curve, auc
-import matplotlib.pyplot as plt
-import random
 import time
 from sklearn.model_selection import train_test_split
 from sklearn.datasets import load_iris
@@ -12,7 +9,7 @@ iris = load_iris()
 X = iris.data  
 Y = iris.target
 
-
+start = time.time()
 #split data into test and train
 X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.3, random_state=42)
 
@@ -40,7 +37,7 @@ class AI:
         prob = {}
         for i in (self.classes):
             prior = self.priors[i]
-            prob[i] = prior + np.sum(np.log(self.Gaussian_prob(X, self.mean[i], self.varience[i])))
+            prob[i] = prior + np.sum(self.Gaussian_prob(X, self.mean[i], self.varience[i]))
         return prob
 
     #use the probabilites to predict which secies the plant is
@@ -57,6 +54,10 @@ nb.fit(X_train, Y_train)
 
 #Predict on the test set
 Y_pred = nb.predict(X_test)
+
+end = time.time()
+
+print (end - start)
 
 #calculate the accuracy
 accuracy = np.mean(Y_pred == Y_test)
