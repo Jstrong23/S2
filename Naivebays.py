@@ -20,13 +20,16 @@ class AI:
         self.priors = {}
         self.varience = {}
 
-        for i in (self.classes):
-            self.mean[i] = np.mean(X)
-            self.priors[i] = (X[Y == i].shape[0]) / X.shape[0]
-            self.varience[i] = np.var(X)
+        for i in self.classes:
+            X_i = X[Y == i]
+            self.mean[i] = np.mean(X_i, axis=0)
+            self.priors[i] = X_i.shape[0] / X.shape[0]
+            self.varience[i] = np.var(X_i, axis=0)
+            
 
     #---------------------------------------------------
     def Gaussian_prob(self, X, mean, varience):
+        
         numerator = np.exp(-((X - mean) ** 2) / (2 * varience))
         denominator = np.sqrt(2 * np.pi * varience)
         return numerator / denominator
@@ -35,9 +38,11 @@ class AI:
     #use the gausian prob function to calculate the probability of each plant to be of each species
     def probability(self, X):
         prob = {}
-        for i in (self.classes):
+        for i in self.classes:
             prior = self.priors[i]
+            #print (prior)
             prob[i] = prior + np.sum(self.Gaussian_prob(X, self.mean[i], self.varience[i]))
+            
         return prob
 
     #use the probabilites to predict which secies the plant is
